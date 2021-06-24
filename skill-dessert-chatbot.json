@@ -1,0 +1,301 @@
+{
+  "intents": [
+    {
+      "intent": "머핀",
+      "examples": [
+        {
+          "text": "머핀"
+        },
+        {
+          "text": "머핀이요"
+        },
+        {
+          "text": "머핀 만들거에요"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "쿠키",
+      "examples": [
+        {
+          "text": "쿠키"
+        },
+        {
+          "text": "쿠키요"
+        },
+        {
+          "text": "쿠키 만들거에요"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "첫인사",
+      "examples": [
+        {
+          "text": "안녕"
+        },
+        {
+          "text": "하이"
+        },
+        {
+          "text": "안녕하세요"
+        },
+        {
+          "text": "hi"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "칼로리",
+      "examples": [
+        {
+          "text": "머핀"
+        },
+        {
+          "text": "쿠키"
+        },
+        {
+          "text": "케이크"
+        },
+        {
+          "text": "디저트의 칼로리가 궁금해요"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "intent": "디저트를만들거에요",
+      "examples": [
+        {
+          "text": "디저트를 만들거에요"
+        }
+      ],
+      "description": ""
+    }
+  ],
+  "entities": [],
+  "metadata": {
+    "api_version": {
+      "major_version": "v2",
+      "minor_version": "2018-11-08"
+    }
+  },
+  "webhooks": [
+    {
+      "url": "",
+      "name": "main_webhook",
+      "headers": []
+    }
+  ],
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "title": "환영 인사",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "안녕하세요? 무엇을 도와드릴까요?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          },
+          {
+            "title": "선택",
+            "options": [
+              {
+                "label": "디저트를 만들거에요",
+                "value": {
+                  "input": {
+                    "text": "디저트를 만들거에요"
+                  }
+                }
+              },
+              {
+                "label": "디저트의 칼로리가 궁금해요",
+                "value": {
+                  "input": {
+                    "text": "디저트의 칼로리가 궁금해요"
+                  }
+                }
+              }
+            ],
+            "response_type": "option"
+          }
+        ]
+      },
+      "conditions": "#첫인사",
+      "dialog_node": "환영 인사",
+      "previous_sibling": "node_8_1624438534648"
+    },
+    {
+      "type": "standard",
+      "title": "디저트의 칼로리가 궁금해요",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "어떤 디저트 만들건가요????"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "random"
+          }
+        ]
+      },
+      "parent": "환영 인사",
+      "conditions": "#칼로리",
+      "dialog_node": "node_1_1624436404379",
+      "previous_sibling": "node_2_1624435272936"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "어떤디저트를 만드실건가요?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "환영 인사",
+      "conditions": "#디저트를만들거에요",
+      "dialog_node": "node_2_1624435272936"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "10000칼로리입니다"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_1_1624436404379",
+      "conditions": "#머핀",
+      "dialog_node": "node_3_1624436704563"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "핑거프린세스?"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_2_1624435272936",
+      "conditions": "#쿠키",
+      "dialog_node": "node_3_1624437729296",
+      "previous_sibling": "node_4_1624437025067"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "알아서만들어라!!"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "parent": "node_2_1624435272936",
+      "conditions": "#머핀",
+      "dialog_node": "node_4_1624437025067"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "뭔말이야.. "
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "node_8_1624438534648"
+      },
+      "conditions": "anything_else",
+      "dialog_node": "node_4_1624438275969",
+      "previous_sibling": "환영 인사"
+    },
+    {
+      "type": "standard",
+      "title": "복귀",
+      "output": {
+        "generic": [
+          {
+            "values": [
+              {
+                "text": "다시시작하겠습니다"
+              }
+            ],
+            "response_type": "text",
+            "selection_policy": "sequential"
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "body",
+        "dialog_node": "환영 인사"
+      },
+      "conditions": "뭔말이야..",
+      "dialog_node": "node_8_1624438534648"
+    }
+  ],
+  "counterexamples": [],
+  "system_settings": {
+    "disambiguation": {
+      "prompt": "당신이 의도한 것은",
+      "enabled": true,
+      "randomize": true,
+      "max_suggestions": 5,
+      "suggestion_text_policy": "title",
+      "none_of_the_above_prompt": "해당 항목 없음"
+    },
+    "human_agent_assist": {
+      "prompt": "당신이 의도한 것은"
+    }
+  },
+  "learning_opt_out": false,
+  "name": "dessert chatbot",
+  "language": "ko",
+  "description": ""
+}
