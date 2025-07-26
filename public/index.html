@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사주 궁합 매칭 채팅</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 첫 화면: 사주 정보 입력 -->
+        <div id="registration-screen" class="screen active">
+            <div class="card">
+                <h1>사주 궁합 매칭</h1>
+                <p class="subtitle">생년월일시를 입력하여 운명의 상대를 만나보세요</p>
+                
+                <form id="birth-form">
+                    <div class="form-group">
+                        <label for="birth-year">생년 (양력)</label>
+                        <select id="birth-year" required>
+                            <option value="">년도 선택</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birth-month">월</label>
+                            <select id="birth-month" required>
+                                <option value="">월</option>
+                                <option value="1">1월</option>
+                                <option value="2">2월</option>
+                                <option value="3">3월</option>
+                                <option value="4">4월</option>
+                                <option value="5">5월</option>
+                                <option value="6">6월</option>
+                                <option value="7">7월</option>
+                                <option value="8">8월</option>
+                                <option value="9">9월</option>
+                                <option value="10">10월</option>
+                                <option value="11">11월</option>
+                                <option value="12">12월</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="birth-day">일</label>
+                            <select id="birth-day" required>
+                                <option value="">일</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birth-hour">시</label>
+                            <select id="birth-hour" required>
+                                <option value="">시간</option>
+                                <option value="0">자시 (23-01시)</option>
+                                <option value="1">축시 (01-03시)</option>
+                                <option value="2">인시 (03-05시)</option>
+                                <option value="3">묘시 (05-07시)</option>
+                                <option value="4">진시 (07-09시)</option>
+                                <option value="5">사시 (09-11시)</option>
+                                <option value="6">오시 (11-13시)</option>
+                                <option value="7">미시 (13-15시)</option>
+                                <option value="8">신시 (15-17시)</option>
+                                <option value="9">유시 (17-19시)</option>
+                                <option value="10">술시 (19-21시)</option>
+                                <option value="11">해시 (21-23시)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">성별</label>
+                            <select id="gender" required>
+                                <option value="">성별</option>
+                                <option value="male">남성</option>
+                                <option value="female">여성</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">운명의 상대 찾기</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 사주 결과 화면 -->
+        <div id="saju-result-screen" class="screen">
+            <div class="card">
+                <h2>당신의 사주</h2>
+                <div id="saju-info">
+                    <div class="saju-pillars">
+                        <div class="pillar">
+                            <div class="pillar-title">년주</div>
+                            <div class="pillar-content">
+                                <div class="gan" id="year-gan"></div>
+                                <div class="ji" id="year-ji"></div>
+                            </div>
+                        </div>
+                        <div class="pillar">
+                            <div class="pillar-title">월주</div>
+                            <div class="pillar-content">
+                                <div class="gan" id="month-gan"></div>
+                                <div class="ji" id="month-ji"></div>
+                            </div>
+                        </div>
+                        <div class="pillar">
+                            <div class="pillar-title">일주</div>
+                            <div class="pillar-content">
+                                <div class="gan" id="day-gan"></div>
+                                <div class="ji" id="day-ji"></div>
+                            </div>
+                        </div>
+                        <div class="pillar">
+                            <div class="pillar-title">시주</div>
+                            <div class="pillar-content">
+                                <div class="gan" id="hour-gan"></div>
+                                <div class="ji" id="hour-ji"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="element-scores">
+                        <h3>오행 분석</h3>
+                        <div class="elements">
+                            <div class="element wood">
+                                <span class="element-name">목(木)</span>
+                                <span class="element-score" id="wood-score"></span>
+                            </div>
+                            <div class="element fire">
+                                <span class="element-name">화(火)</span>
+                                <span class="element-score" id="fire-score"></span>
+                            </div>
+                            <div class="element earth">
+                                <span class="element-name">토(土)</span>
+                                <span class="element-score" id="earth-score"></span>
+                            </div>
+                            <div class="element metal">
+                                <span class="element-name">금(金)</span>
+                                <span class="element-score" id="metal-score"></span>
+                            </div>
+                            <div class="element water">
+                                <span class="element-name">수(水)</span>
+                                <span class="element-score" id="water-score"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="yongsin">
+                            <strong>용신: </strong><span id="yongsin-text"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="start-matching-btn" class="btn-primary">매칭 시작</button>
+            </div>
+        </div>
+
+        <!-- 대기 화면 -->
+        <div id="waiting-screen" class="screen">
+            <div class="card">
+                <div class="loading-spinner"></div>
+                <h2>운명의 상대를 찾고 있습니다</h2>
+                <p class="waiting-message">사주 궁합이 맞는 상대가 나타날 때까지 기다려주세요.</p>
+                <div class="waiting-tips">
+                    <h3>매칭 기준</h3>
+                    <ul>
+                        <li>오행 보완 관계</li>
+                        <li>용신 매칭</li>
+                        <li>천을귀인 관계</li>
+                        <li>일지 육합/삼합</li>
+                        <li>천간삼기</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 채팅 화면 -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="partner-info">
+                        <h3 id="partner-info-text">상대방</h3>
+                        <div class="compatibility-score">
+                            궁합도: <span id="compatibility-score">0</span>점
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <!-- 메시지들이 여기에 추가됩니다 -->
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <input type="text" id="message-input" placeholder="메시지를 입력하세요..." maxlength="500">
+                        <button id="send-btn" class="btn-send">전송</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
