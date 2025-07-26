@@ -302,7 +302,10 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const HOST = '0.0.0.0'; // 모든 인터페이스에서 접속 허용
+
+server.listen(PORT, HOST, () => {
     console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
     console.log(`http://localhost:${PORT} 에서 접속 가능합니다.`);
+    console.log(`http://172.30.0.2:${PORT} 에서 외부 접속 가능합니다.`);
 });
