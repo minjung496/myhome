@@ -312,5 +312,11 @@ class SajuMatchingApp {
 
 // 앱 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    window.sajuApp = new SajuMatchingApp();
+    console.log('DOM 로드 완료');
+    try {
+        window.sajuApp = new SajuMatchingApp();
+        console.log('사주 앱 초기화 완료');
+    } catch (error) {
+        console.error('앱 초기화 오류:', error);
+    }
 });
