@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 사주 궁합 계산기 (오프라인)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        select, input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: none;
+        }
+        .saju-result {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .pillar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .pillar-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .gan { color: #667eea; font-weight: bold; }
+        .ji { color: #764ba2; font-weight: bold; }
+        .elements {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .element {
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+        .wood { background: #28a745; }
+        .fire { background: #dc3545; }
+        .earth { background: #ffc107; color: #333; }
+        .metal { background: #6c757d; }
+        .water { background: #007bff; }
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; gap: 0; }
+            .card { padding: 20px; }
+            h1 { font-size: 2em; }
+            .saju-result, .elements { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔮 사주 궁합 계산기</h1>
+        <p class="subtitle">생년월일시를 입력하여 나의 사주를 확인해보세요</p>
+        
+        <form id="sajuForm">
+            <div class="form-group">
+                <label for="birth-year">생년 (양력)</label>
+                <select id="birth-year" required>
+                    <option value="">년도 선택</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birth-month">월</label>
+                    <select id="birth-month" required>
+                        <option value="">월</option>
+                        <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
+                        <option value="4">4월</option><option value="5">5월</option><option value="6">6월</option>
+                        <option value="7">7월</option><option value="8">8월</option><option value="9">9월</option>
+                        <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birth-day">일</label>
+                    <select id="birth-day" required>
+                        <option value="">일</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birth-hour">시</label>
+                    <select id="birth-hour" required>
+                        <option value="">시간</option>
+                        <option value="0">자시 (23-01시)</option><option value="1">축시 (01-03시)</option>
+                        <option value="2">인시 (03-05시)</option><option value="3">묘시 (05-07시)</option>
+                        <option value="4">진시 (07-09시)</option><option value="5">사시 (09-11시)</option>
+                        <option value="6">오시 (11-13시)</option><option value="7">미시 (13-15시)</option>
+                        <option value="8">신시 (15-17시)</option><option value="9">유시 (17-19시)</option>
+                        <option value="10">술시 (19-21시)</option><option value="11">해시 (21-23시)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">성별</label>
+                    <select id="gender" required>
+                        <option value="">성별</option>
+                        <option value="male">남성</option>
+                        <option value="female">여성</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary">🌟 내 사주 확인하기</button>
+        </form>
+        
+        <div id="result" class="result">
+            <h2>🎯 나의 사주</h2>
+            <div id="saju-display" class="saju-result"></div>
+            <h3>🎨 오행 분석</h3>
+            <div id="elements-display" class="elements"></div>
+            <div id="yongsin-display"></div>
+        </div>
+    </div>
+
+    <script>
+        // 천간과 지지
+        const heavenlyStems = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
+        const earthlyBranches = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
+        
+        // 오행 매핑
+        const fiveElements = {
+            '갑': '목', '을': '목', '병': '화', '정': '화', '무': '토', '기': '토',
+            '경': '금', '신': '금', '임': '수', '계': '수',
+            '자': '수', '축': '토', '인': '목', '묘': '목', '진': '토', '사': '화',
+            '오': '화', '미': '토', '신': '금', '유': '금', '술': '토', '해': '수'
+        };
+        
+        // 년도 옵션 추가
+        const yearSelect = document.getElementById('birth-year');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear - 80; year <= currentYear - 18; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year + '년';
+            yearSelect.appendChild(option);
+        }
+        
+        // 일 옵션 추가
+        document.getElementById('birth-month').addEventListener('change', function() {
+            const month = parseInt(this.value);
+            const daySelect = document.getElementById('birth-day');
+            daySelect.innerHTML = '<option value="">일</option>';
+            
+            if (month) {
+                const daysInMonth = new Date(2023, month, 0).getDate();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day + '일';
+                    daySelect.appendChild(option);
+                }
+            }
+        });
+        
+        // 사주 계산
+        function calculateSaju(year, month, day, hour) {
+            const baseYear = 1924;
+            const yearIndex = (year - baseYear) % 60;
+            
+            return {
+                year: { 
+                    gan: heavenlyStems[yearIndex % 10], 
+                    ji: earthlyBranches[yearIndex % 12] 
+                },
+                month: { 
+                    gan: heavenlyStems[((year - baseYear) * 12 + month - 1) % 10], 
+                    ji: earthlyBranches[(month - 1) % 12] 
+                },
+                day: { 
+                    gan: heavenlyStems[Math.floor((year - baseYear) * 365.25 + month * 30 + day) % 10], 
+                    ji: earthlyBranches[Math.floor((year - baseYear) * 365.25 + month * 30 + day) % 12] 
+                },
+                hour: { 
+                    gan: heavenlyStems[(Math.floor(hour / 2) * 2) % 10], 
+                    ji: earthlyBranches[Math.floor(hour / 2) % 12] 
+                }
+            };
+        }
+        
+        // 폼 제출 처리
+        document.getElementById('sajuForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const year = parseInt(document.getElementById('birth-year').value);
+            const month = parseInt(document.getElementById('birth-month').value);
+            const day = parseInt(document.getElementById('birth-day').value);
+            const hour = parseInt(document.getElementById('birth-hour').value);
+            const gender = document.getElementById('gender').value;
+            
+            if (!year || !month || !day || hour === '' || !gender) {
+                alert('모든 정보를 입력해주세요!');
+                return;
+            }
+            
+            const saju = calculateSaju(year, month, day, hour);
+            displayResult(saju, gender);
+        });
+        
+        function displayResult(saju, gender) {
+            // 사주 표시
+            const sajuDisplay = document.getElementById('saju-display');
+            sajuDisplay.innerHTML = `
+                <div class="pillar">
+                    <div class="pillar-title">년주</div>
+                    <div class="gan">${saju.year.gan}</div>
+                    <div class="ji">${saju.year.ji}</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">월주</div>
+                    <div class="gan">${saju.month.gan}</div>
+                    <div class="ji">${saju.month.ji}</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">일주</div>
+                    <div class="gan">${saju.day.gan}</div>
+                    <div class="ji">${saju.day.ji}</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">시주</div>
+                    <div class="gan">${saju.hour.gan}</div>
+                    <div class="ji">${saju.hour.ji}</div>
+                </div>
+            `;
+            
+            // 오행 계산
+            const elements = {목: 0, 화: 0, 토: 0, 금: 0, 수: 0};
+            [saju.year.gan, saju.year.ji, saju.month.gan, saju.month.ji, 
+             saju.day.gan, saju.day.ji, saju.hour.gan, saju.hour.ji].forEach(char => {
+                const element = fiveElements[char];
+                if (element) elements[element]++;
+            });
+            
+            // 오행 표시
+            const elementsDisplay = document.getElementById('elements-display');
+            elementsDisplay.innerHTML = `
+                <div class="element wood">목<br>${elements.목}</div>
+                <div class="element fire">화<br>${elements.화}</div>
+                <div class="element earth">토<br>${elements.토}</div>
+                <div class="element metal">금<br>${elements.금}</div>
+                <div class="element water">수<br>${elements.수}</div>
+            `;
+            
+            // 용신 (가장 부족한 오행)
+            const minElement = Object.keys(elements).reduce((a, b) => elements[a] < elements[b] ? a : b);
+            document.getElementById('yongsin-display').innerHTML = `
+                <p><strong>🎯 용신:</strong> ${minElement}</p>
+                <p><strong>🎭 일주:</strong> ${saju.day.gan}${saju.day.ji}</p>
+            `;
+            
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
